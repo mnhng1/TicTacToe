@@ -1,6 +1,5 @@
 (function() {
     const boardDim = 3;
-    
     for (let i = 0; i <  boardDim; i++) {
         const row = document.createElement('div');
         row.classList.add('row');
@@ -18,16 +17,28 @@
 
 
 
-function Player(name, score, symbol){
-    return {name, score, symbol}
-}
+
 
 
 function Game() {
-    let player1 = Player('Player 1',0 ,  'X');
-    let player2 = Player('Player 2',0 ,'O');
+
+    function Player(){
+        let name = ""
+        let symbol = ""
+        let score = 0;
+        const getName = () => 
+        const getScore = () => score;
+        const incrementScore = () => score += 1;
+        return {name, symbol, getScore, incrementScore}
+    };
+    
+    let gameState  = document.createElement("div") ;
+    gameState.className = "gameState";
+    let player1 = Player('Player 1' ,  'X');
+    let player2 = Player('Player 2','O');
     let state = false;
     currentPlayer = player1;
+
     function switchPlayer(){
         currentPlayer = currentPlayer === player1 ? player2 : player1;
     }
@@ -88,41 +99,69 @@ function Game() {
         return false;
     }
 
+    function areAllCellsFilled(cells) {
+        for (let i = 0; i < cells.length; i++) {
+            if (cells[i].textContent.trim() === '') {
+                return false;
+            }
+        }
+        return true;
+    }
+    
 
-    cells.forEach(cell=> {
-        cell.addEventListener('click', function() {
-            if (cell.textContent.trim() === '' && (!state ==true)){
-                    cell.textContent=`${currentPlayer.symbol}`;
-                    let move = {row: cell.dataset.row, col:cell.dataset.col}
-                    if (checkWin(move) === true) {
-                        state = true;
-                        currentPlayer.score += 1;
-                    }
-                    switchPlayer()
 
-                    console.log({currentPlayer, state})
-
-                    if (state === true) {
-                        let gameState = document.createElement("div")
-                        gameState.className = "gameState";
-                        gameState.textContent = "You have won!"
-                        document.querySelector('.game-board').appendChild(gameState);
-                        
-                        let resetButton = document.createElement("button")
-                        resetButton.className = "resetButton";
-                        resetButton.textContent = "RESET";
-                        document.querySelector('.gameState').appendChild(resetButton);
-                        resetButton.addEventListener('click', function(){
-                            cells.forEach(cell => {
-                                cell.textContent = " ";
+    function reset(){
+        if (document.querySelector('.resetButton')) return;
+        let resetButton = document.createElement("button");
+                            resetButton.className = "resetButton";
+                            resetButton.textContent = "RESET";
+                            
+                            document.querySelector('.game-board').appendChild(gameState).appendChild(resetButton);
+                            resetButton.addEventListener('click', function(){
+                                cells.forEach(cell => {
+                                    cell.textContent = " ";
+                                })
                                 state = false;
-
-                            })
-                        })
+                                gameState.parentNode.removeChild(gameState);
+                                resetButton.parentNode.removeChild(resetButton);
+                                currentPlayer = player1; // Reset the current player
+                            }) 
+    }
+    const DisplayController = () => {
+        
+        cells.forEach(cell=> {
+            cell.addEventListener('click', function() {
+                if (cell.textContent.trim() === '' && (state !==true)){
+                        cell.textContent=`${currentPlayer.symbol}`;
+                        let move = {row: cell.dataset.row, col:cell.dataset.col}
+                        if (checkWin(move) === true ) {
+                            state = true;
+                            console.log("WINNN")
+                            currentPlayer.incrementScore()
+                            
+                            gameState.textContent = `${currentPlayer.symbol} have won!`
+                            document.querySelector('.game-board').appendChild(gameState);
+                            reset()
+                        }
+                        }
+                        switchPlayer()
+                        
+                            
+                        
+                        if (areAllCellsFilled(cells) ) {  
+                            reset()
+                        }
                     
-                }
-        });
-    })
+                        
+            });
+        })};
+
+    // ... rest of your code ...
+    return {
+        DisplayController,
+        getPlayer1Score: player1.getScore,
+        getPlayer2Score: player2.getScore
+    }
     
     
     
@@ -130,4 +169,8 @@ function Game() {
 
 
 
-let game = Game();
+let game = Game(); 
+game.DisplayController()
+let player1Score = game.getPlayer1Score();
+let player2Score = game.getPlayer2Score();
+console.log(player1Score)
