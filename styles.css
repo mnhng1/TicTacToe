@@ -3,6 +3,7 @@ body{
     justify-content: center;
     align-items: center;
     height: 100vh;
+    gap: 10%;
 }
 .game-board{          
     display: flex;
@@ -42,4 +43,17 @@ body{
 .resetButton{
     justify-content:flex-end;
     align-items: center;
+}
+
+.player-inputs{
+    display: flex;
+    flex-direction: column;
+    gap: 3vh;
+    justify-content: center;
+    align-items: center;
+}
+
+#start-game{
+    height: 50px;
+    width: 100px;
 }

@@ -21,23 +21,27 @@
 
 
 function Game() {
-
-    function Player(){
-        let name = ""
-        let symbol = ""
-        let score = 0;
-        const getName = () => 
+    let player1, player2;
+    function Player(name, symbol){
+        let score = 0
         const getScore = () => score;
         const incrementScore = () => score += 1;
         return {name, symbol, getScore, incrementScore}
     };
+    (function() {
+        document.getElementById('start-game').addEventListener('click', function() {
+        player1 = Player(document.getElementById('player1-name').value, document.getElementById('symbol1').value);
+        player2 = Player(document.getElementById('player2-name').value, document.getElementById('symbol2').value);
+        currentPlayer = player1;
+        DisplayController()
+        
+    })})();
     
     let gameState  = document.createElement("div") ;
     gameState.className = "gameState";
-    let player1 = Player('Player 1' ,  'X');
-    let player2 = Player('Player 2','O');
+    
     let state = false;
-    currentPlayer = player1;
+    
 
     function switchPlayer(){
         currentPlayer = currentPlayer === player1 ? player2 : player1;
@@ -139,7 +143,7 @@ function Game() {
                             console.log("WINNN")
                             currentPlayer.incrementScore()
                             
-                            gameState.textContent = `${currentPlayer.symbol} have won!`
+                            gameState.textContent = `${currentPlayer.name} have won!`
                             document.querySelector('.game-board').appendChild(gameState);
                             reset()
                         }
@@ -159,8 +163,7 @@ function Game() {
     // ... rest of your code ...
     return {
         DisplayController,
-        getPlayer1Score: player1.getScore,
-        getPlayer2Score: player2.getScore
+        
     }
     
     
@@ -168,9 +171,5 @@ function Game() {
 }
 
 
+let game = Game()
 
-let game = Game(); 
-game.DisplayController()
-let player1Score = game.getPlayer1Score();
-let player2Score = game.getPlayer2Score();
-console.log(player1Score)
