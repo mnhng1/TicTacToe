@@ -20,7 +20,7 @@
 
 
 
-function Game() {
+const game = (() => {
     let player1, player2;
     function Player(name, symbol){
         let score = 0
@@ -28,12 +28,67 @@ function Game() {
         const incrementScore = () => score += 1;
         return {name, symbol, getScore, incrementScore}
     };
+
+    document.getElementById('symbol1').addEventListener('change', function() {
+    const selectedOption = this.value;
+    const symbol2 = document.getElementById('symbol2');
+    
+    // Clear all options in the second dropdown
+    symbol2.innerHTML = '';
+
+    // Add the option that wasn't selected in the first dropdown
+    const otherOption = document.createElement('option');
+    otherOption.value = selectedOption === 'X' ? 'O' : 'X';
+    otherOption.text = selectedOption === 'X' ? 'O' : 'X';
+    symbol2.add(otherOption);
+    });
+
+    document.getElementById('symbol2').addEventListener('change', function() {
+        const selectedOption = this.value;
+        const symbol1 = document.getElementById('symbol1');
+        
+        // Clear all options in the second dropdown
+        symbol1.innerHTML = '';
+    
+        // Add the option that wasn't selected in the first dropdown
+        const otherOption = document.createElement('option');
+        otherOption.value = selectedOption === 'X' ? 'O' : 'X';
+        otherOption.text = selectedOption === 'X' ? 'O' : 'X';
+        symbol1.add(otherOption);
+        });
+
     (function() {
         document.getElementById('start-game').addEventListener('click', function() {
         player1 = Player(document.getElementById('player1-name').value, document.getElementById('symbol1').value);
         player2 = Player(document.getElementById('player2-name').value, document.getElementById('symbol2').value);
         currentPlayer = player1;
-        DisplayController()
+        
+        // Hide the input fields and dropdowns
+        document.getElementById('player1-name').style.display = 'none';
+        document.getElementById('symbol1').style.display = 'none';
+        document.getElementById('player2-name').style.display = 'none';
+        document.getElementById('symbol2').style.display = 'none';
+        let playerInputs = document.getElementsByClassName("player-inputs");
+        while(playerInputs[0]) {
+            playerInputs[0].parentNode.removeChild(playerInputs[0]);
+        };
+
+        // Display the player names and scores
+
+        
+        const player1Display = document.createElement('div');
+        player1Display.textContent = `${player1.name}: ${player1.getScore()}`;
+        player1Display.id= "player1-score"
+        document.body.appendChild(player1Display);
+
+        const player2Display = document.createElement('div');
+        player2Display.textContent = `${player2.name}: ${player2.getScore()}`;
+        player2Display.id= "player2-score"
+        document.body.appendChild(player2Display);
+        
+        
+        
+        DisplayController();
         
     })})();
     
@@ -142,7 +197,13 @@ function Game() {
                             state = true;
                             console.log("WINNN")
                             currentPlayer.incrementScore()
+                           
                             
+                            document.getElementById('player1-score').textContent = `${player1.name}: ${player1.getScore()}`;
+                            document.getElementById('player2-score').textContent = `${player2.name}: ${player2.getScore()}`;
+                            
+
+
                             gameState.textContent = `${currentPlayer.name} have won!`
                             document.querySelector('.game-board').appendChild(gameState);
                             reset()
@@ -153,6 +214,7 @@ function Game() {
                             
                         
                         if (areAllCellsFilled(cells) ) {  
+                            gameState.textContent = `TIE`
                             reset()
                         }
                     
@@ -168,8 +230,7 @@ function Game() {
     
     
     
-}
+})();
 
 
-let game = Game()
 
